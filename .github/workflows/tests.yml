@@ -1,6 +1,12 @@
 name: Testes de API
 
 on:
+  schedule:
+    #crononograma de execução
+    # 1º - minuto, 2º - hora,  3º - dia do mês, 4º - mês, 5º - dia da semana
+    - cron: '0 0 * * *' # todo dia, à meia-noite
+
+
   push:
     branches: [main]
   pull_request:
@@ -34,19 +40,14 @@ jobs:
       - name: Instalar dependências
         run: npm ci
 
-      - name: Iniciar API
-        run: |
-          npm start > server.log 2>&1 &
-          for tentativa in {1..30}; do
-            if curl --fail --silent http://localhost:3000/ > /dev/null; then
-              break
-            fi
-            sleep 1
-          done
-        env:
-          MONGODB_URI: mongodb://127.0.0.1:27017/gestao-de-alunos-test
-
       - name: Executar testes
         run: npm test
         env:
           MONGODB_URI: mongodb://127.0.0.1:27017/gestao-de-alunos-test
+
+      - name: Salvando relatório de testes
+        uses: actions/upload-artifact@v4
+        if: ${{always()}}
+        with:
+          path: reports/results.xml
+          name: relatorio-testes
