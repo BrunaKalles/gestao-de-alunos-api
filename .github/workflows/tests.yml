@@ -4,7 +4,7 @@ on:
   schedule:
     #crononograma de execução
     # 1º - minuto, 2º - hora,  3º - dia do mês, 4º - mês, 5º - dia da semana
-    - cron: '0 0 * * *' # todo dia, à meia-noite
+    - cron: '0 0 * * *' # todos os dias, à meia-noite
 
 
   push:
