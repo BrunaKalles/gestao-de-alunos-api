@@ -20,8 +20,8 @@ jobs:
       PORT: 3000
       BASE_URL: http://localhost:3000
       MONGODB_URI: mongodb://127.0.0.1:27017/gestao-de-alunos-test
-      ADMIN_EMAIL: admin@escola.com
-      ADMIN_SENHA: admin123
+      ADMIN_EMAIL:  ${{ secrets.ADMIN_EMAIL }}
+      ADMIN_SENHA:  ${{ secrets.ADMIN_SENHA }}
 
     services:
       mongodb:
