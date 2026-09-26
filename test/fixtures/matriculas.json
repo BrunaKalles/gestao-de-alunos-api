@@ -1,0 +1,15 @@
+[
+  {
+    "dadosAluno": {
+      "nome": "José da Silva",
+      "email": "jose.silva@example.com",
+      "matricula": "20269001",
+      "senha": "123456"
+    },
+    "dadosDisciplina": {
+      "nome": "disciplina se matemática",
+      "codigo": "mat101",
+      "cargaHoraria": 40
+    }
+  }
+]
