@@ -43,7 +43,11 @@ jobs:
       - name: Executar testes
         run: npm test
         env:
+          PORT: 3000
+          BASE_URL: http://localhost:3000
           MONGODB_URI: mongodb://127.0.0.1:27017/gestao-de-alunos-test
+          ADMIN_EMAIL: admin@escola.com
+          ADMIN_SENHA: admin123
 
       - name: Salvando relatório de testes
         uses: actions/upload-artifact@v4
