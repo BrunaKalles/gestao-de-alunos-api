@@ -4,7 +4,7 @@ on:
   schedule:
     #crononograma de execução
     # 1º - minuto, 2º - hora,  3º - dia do mês, 4º - mês, 5º - dia da semana
-    - cron: '0 0 * * *' # todo dia, à meia-noite
+    - cron: '0 0 * * *' # todos os dias, à meia-noite
 
 
   push:
@@ -15,6 +15,13 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    env:
+      PORT: 3000
+      BASE_URL: http://localhost:3000
+      MONGODB_URI: mongodb://127.0.0.1:27017/gestao-de-alunos-test
+      ADMIN_EMAIL:  ${{ secrets.ADMIN_EMAIL }}
+      ADMIN_SENHA:  ${{ secrets.ADMIN_SENHA }}
 
     services:
       mongodb:
@@ -39,15 +46,44 @@ jobs:
 
       - name: Instalar dependências
         run: npm ci
+      
+      - name: Iniciar API
+        run: |
+          npm start > app.log 2>&1 &
+
+      - name: Aguardar API iniciar
+        run: |
+          echo "Aguardando API iniciar..."
+
+          for i in {1..30}; do
+            if curl -s http://localhost:3000 > /dev/null; then
+              echo "API disponível!"
+              exit 0
+            fi
+
+            echo "Tentativa $i/30..."
+            sleep 2
+          done
+
+          echo "API não iniciou."
+          echo "===== LOG DA API ====="
+          cat app.log
+
+          exit 1
 
       - name: Executar testes
         run: npm test
-        env:
-          MONGODB_URI: mongodb://127.0.0.1:27017/gestao-de-alunos-test
 
-      - name: Salvando relatório de testes
+      - name: Salvar relatório de testes
+        if: always()
         uses: actions/upload-artifact@v4
-        if: ${{always()}}
         with:
-          path: reports/results.xml
           name: relatorio-testes
+          path: reports/
+
+      - name: Salvar log da API
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-log
+          path: app.log
